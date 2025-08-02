@@ -58,6 +58,7 @@ public class RegisterTest {
         Assert.assertEquals(actualMsg, expectedMsg, "Success message is not displayed as expected");
     }
 
+
     @Test
     public void TC10() {
         extentTest = ExtentManager.createTest("TC10", "User can't create account with mismatched confirm password");
