@@ -1,11 +1,14 @@
-package Testcases;
+package testCases;
 
+import Config.ExtentManager;
 import PageObjects.HomePage;
 import PageObjects.LoginPage;
+import com.aventstack.extentreports.ExtentTest;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.testng.Assert;
+import org.testng.ITestResult;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -16,22 +19,37 @@ import java.time.Duration;
 
 public class AccessControlTest {
 
+    ExtentTest extentTest;
+    HomePage homePage;
+    LoginPage loginPage;
+
     @BeforeMethod
     public void beforeMethod() {
         Constant.WEBDRIVER = new ChromeDriver();
         Constant.WEBDRIVER.manage().window().maximize();
+
+        homePage = new HomePage();
+        loginPage = new LoginPage();
     }
 
     @AfterMethod
-    public void afterMethod() {
+    public void afterMethod(ITestResult result) {
+        if (result.getStatus() == ITestResult.FAILURE) {
+            extentTest.fail("Test failed: " + result.getThrowable().getMessage());
+            String screenshotPath = ExtentManager.captureScreenshot(Constant.WEBDRIVER, result.getName());
+            extentTest.addScreenCaptureFromPath(screenshotPath);
+        } else if (result.getStatus() == ITestResult.SUCCESS) {
+            extentTest.pass("Test passed");
+        } else if (result.getStatus() == ITestResult.SKIP) {
+            extentTest.skip("Test skipped: " + result.getThrowable().getMessage());
+        }
+        ExtentManager.flush();
         Constant.WEBDRIVER.quit();
     }
 
     @Test
     public void TC04() {
-        System.out.println("TC04 - Login page displays when un-logged user accesses protected page");
-
-        HomePage homePage = new HomePage();
+        extentTest = ExtentManager.createTest("TC04", "Login page displays when unlogged user accesses protected page");
         homePage.open();
 
         Constant.WEBDRIVER.findElement(By.xpath("//a[@href='/Page/BookTicketPage.cshtml']")).click();
@@ -43,13 +61,11 @@ public class AccessControlTest {
 
     @Test
     public void TC06() {
-        System.out.println("TC06 - Additional pages display once user logged in");
-
-        HomePage homePage = new HomePage();
+        extentTest = ExtentManager.createTest("TC06", "Additional pages display once user logged in");
         homePage.open();
 
-        LoginPage loginPage = homePage.gotoLoginPage();
-        homePage = loginPage.login(Constant.USERNAME, Constant.PASSWORD);
+        loginPage = homePage.gotoLoginPage();
+        loginPage.login(Constant.USERNAME, Constant.PASSWORD);
 
         WebDriverWait wait = new WebDriverWait(Constant.WEBDRIVER, Duration.ofSeconds(10));
 

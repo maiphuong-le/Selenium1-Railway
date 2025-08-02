@@ -1,36 +1,51 @@
-package Testcases;
+package testCases;
 
+import Config.ExtentManager;
 import PageObjects.HomePage;
 import PageObjects.LoginPage;
+import com.aventstack.extentreports.ExtentTest;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.testng.Assert;
+import org.testng.ITestResult;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import Common.Utilities;
 import Constant.Constant;
 
 public class LoginTest {
 
+    ExtentTest extentTest;
+    HomePage homePage;
+    LoginPage loginPage;
     @BeforeMethod
     public void beforeMethod() {
-        System.out.println("Pre-condition");
-
         Constant.WEBDRIVER = new ChromeDriver();
         Constant.WEBDRIVER.manage().window().maximize();
+        homePage = new HomePage();
+        loginPage = new LoginPage();
+
     }
 
     @AfterMethod
-    public void afterMethod() {
-        System.out.println("Post-condition");
+    public void afterMethod(ITestResult result) {
+        if (result.getStatus() == ITestResult.FAILURE) {
+            extentTest.fail("Test failed: " + result.getThrowable().getMessage());
+            String screenshotPath = ExtentManager.captureScreenshot(Constant.WEBDRIVER, result.getName());
+            extentTest.addScreenCaptureFromPath(screenshotPath);
+        } else if (result.getStatus() == ITestResult.SUCCESS) {
+            extentTest.pass("Test passed");
+        } else if (result.getStatus() == ITestResult.SKIP) {
+            extentTest.skip("Test skipped: " + result.getThrowable().getMessage());
+        }
+        ExtentManager.flush();
         Constant.WEBDRIVER.quit();
     }
 
     @Test
     public void TC01() {
-        System.out.println("TC01 - User can log into Railway with valid username and password");
-        HomePage homePage = new HomePage();
+        extentTest = ExtentManager.createTest("TC01", "User can log into Railway with valid username and password");
+
         homePage.open();
 
         LoginPage loginPage = homePage.gotoLoginPage();
@@ -43,12 +58,11 @@ public class LoginTest {
 
     @Test
     public void TC02() {
-        System.out.println("TC02 - User can't login with blank 'Username' textbox");
 
-        HomePage homePage = new HomePage();
+        extentTest = ExtentManager.createTest("TC02", "User can't login with blank 'Username' textbox");
         homePage.open();
 
-        LoginPage loginPage = homePage.gotoLoginPage();
+        loginPage = homePage.gotoLoginPage();
 
         loginPage.login("", Constant.PASSWORD);
 
@@ -60,12 +74,11 @@ public class LoginTest {
 
     @Test
     public void TC03() {
-        System.out.println("TC03 - User cannot log into Railway with invalid password");
 
-        HomePage homePage = new HomePage();
+        extentTest = ExtentManager.createTest("TC03", "User cannot log into Railway with invalid password");
         homePage.open();
 
-        LoginPage loginPage = homePage.gotoLoginPage();
+        loginPage = homePage.gotoLoginPage();
 
         loginPage.login(Constant.USERNAME, "invalidPassword123");
 
@@ -77,12 +90,11 @@ public class LoginTest {
 
     @Test
     public void TC05() {
-        System.out.println("TC05 - System shows message when user enters wrong password several times");
+        extentTest = ExtentManager.createTest("TC05", "System shows message when user enters wrong password several times");
 
-        HomePage homePage = new HomePage();
         homePage.open();
 
-        LoginPage loginPage = homePage.gotoLoginPage();
+        loginPage = homePage.gotoLoginPage();
 
         for (int i = 1; i <= 4; i++) {
             System.out.println("Attempt " + i);
@@ -92,17 +104,14 @@ public class LoginTest {
 
             if (i < 4) {
                 String generalError = loginPage.getLoginErrorMessageText();
-                Assert.assertTrue(generalError.contains("There was a problem"),
-                        "General login error message should appear");
+                Assert.assertTrue(generalError.contains("There was a problem"), "General login error message should appear");
             }
         }
 
         String warningMsg = loginPage.getLoginErrorMessageText();
         String expectedMsg = "You have used 4 out of 5 login attempts. After all 5 have been used, you will be unable to login for 15 minutes.";
-        Assert.assertEquals(warningMsg, expectedMsg,
-                "Warning message for multiple failed login attempts is not displayed as expected");
+        Assert.assertEquals(warningMsg, expectedMsg, "Warning message for multiple failed login attempts is not displayed as expected");
     }
-
 
 
 }
