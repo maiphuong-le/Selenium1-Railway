@@ -81,12 +81,16 @@ public class AccessControlTest {
         String currentUrl = Constant.WEBDRIVER.getCurrentUrl();
         Assert.assertTrue(currentUrl.contains("ManageTicket"), "User is not navigated to My ticket page");
 
-        Constant.WEBDRIVER.navigate().back();
-
         tabChangePassword = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//a[@href='/Account/ChangePassword.cshtml']")));
         tabChangePassword.click();
+
+        wait.until(ExpectedConditions.urlContains("ChangePassword"));
+
         currentUrl = Constant.WEBDRIVER.getCurrentUrl();
+        System.out.println("Current URL: " + currentUrl);
         Assert.assertTrue(currentUrl.contains("ChangePassword"), "User is not navigated to Change password page");
+
     }
+
 
 }

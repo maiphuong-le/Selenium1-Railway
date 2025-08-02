@@ -18,6 +18,7 @@ public class LoginTest {
     ExtentTest extentTest;
     HomePage homePage;
     LoginPage loginPage;
+
     @BeforeMethod
     public void beforeMethod() {
         Constant.WEBDRIVER = new ChromeDriver();
