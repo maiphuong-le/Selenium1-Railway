@@ -2,106 +2,86 @@ package testCases;
 
 import Config.ExtentManager;
 import Constant.Constant;
+import Model.Account;
+import PageObjects.LoginPage;
+import dataTest.DataTests;
+import messages.Message;
 import PageObjects.HomePage;
 import PageObjects.RegisterPage;
-import com.aventstack.extentreports.ExtentTest;
+import config.BaseTest;
 import org.openqa.selenium.By;
-import org.openqa.selenium.chrome.ChromeDriver;
 import org.testng.Assert;
-import org.testng.ITestResult;
-import org.testng.annotations.*;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
+import org.testng.asserts.SoftAssert;
 
-public class RegisterTest {
+public class RegisterTest extends BaseTest {
 
-    ExtentTest extentTest;
     HomePage homePage;
     RegisterPage registerPage;
+    SoftAssert softAssert;
 
     @BeforeMethod
-    public void beforeMethod() {
-        Constant.WEBDRIVER = new ChromeDriver();
-        Constant.WEBDRIVER.manage().window().maximize();
+    public void setUp() {
         homePage = new HomePage();
         registerPage = new RegisterPage();
+        softAssert = new SoftAssert();
+
     }
 
-    @AfterMethod
-    public void afterMethod(ITestResult result) {
-        if (result.getStatus() == ITestResult.FAILURE) {
-            extentTest.fail("Test failed: " + result.getThrowable().getMessage());
-            String screenshotPath = ExtentManager.captureScreenshot(Constant.WEBDRIVER, result.getName());
-            extentTest.addScreenCaptureFromPath(screenshotPath);
-        } else if (result.getStatus() == ITestResult.SUCCESS) {
-            extentTest.pass("Test passed");
-        } else if (result.getStatus() == ITestResult.SKIP) {
-            extentTest.skip("Test skipped: " + result.getThrowable().getMessage());
-        }
-        ExtentManager.flush();
-        Constant.WEBDRIVER.quit();
-    }
 
-    @Test
-    public void TC07() {
+    @Test(dataProvider = "validRegisterAccount", dataProviderClass = DataTests.class)
+    public void TC07(Account account) {
         extentTest = ExtentManager.createTest("TC07", "User can create new account");
-
-        String email = Constant.generateUniqueEmail();
-        String password = Constant.VALID_PASSWORD;
-        String confirmPassword = Constant.VALID_PASSWORD;
-        String pid = Constant.VALID_PID;
-
         homePage.open();
-        Constant.WEBDRIVER.findElement(By.xpath("//div[@id='menu']//a[@href='/Account/Register.cshtml']")).click();
-        registerPage.register(email, password, confirmPassword, pid);
+        homePage.clickRegisterTab();
+        registerPage.register(
+                account.getEmail(),
+                account.getPassword(),
+                account.getConfirmPassword(),
+                account.getPid()
+        );
+        Assert.assertEquals(registerPage.getSuccessMessage(), Message.REGISTRATION_SUCCESS, "Success message is not displayed as expected");
 
-        String actualMsg = registerPage.getSuccessMessage();
-        String expectedMsg = "Registration Confirmed! You can now log in to the site.";
-        Assert.assertEquals(actualMsg, expectedMsg, "Success message is not displayed as expected");
+        softAssert.assertAll();
     }
 
-
-    @Test
-    public void TC10() {
+    @Test(dataProvider = "invalidConfirmPasswordAccount", dataProviderClass = DataTests.class)
+    public void TC10(Account account) {
         extentTest = ExtentManager.createTest("TC10", "User can't create account with mismatched confirm password");
 
-        String email = Constant.generateUniqueEmail();
-        String password = Constant.VALID_PASSWORD;
-        String confirmPassword = "Different123"; // intentionally wrong
-        String pid = Constant.VALID_PID;
-
-
         homePage.open();
-        Constant.WEBDRIVER.findElement(By.xpath("//div[@id='menu']//a[@href='/Account/Register.cshtml']")).click();
-        registerPage.register(email, password, confirmPassword, pid);
+        homePage.clickRegisterTab();
 
-        String actualMsg = registerPage.getErrorMessage();
-        String expectedMsg = "There're errors in the form. Please correct the errors and try again.";
-        Assert.assertEquals(actualMsg, expectedMsg, "Error message is not displayed as expected");
+        registerPage.register(
+                account.getEmail(),
+                account.getPassword(),
+                account.getConfirmPassword(),
+                account.getPid()
+        );
+
+        Assert.assertEquals(registerPage.getErrorMessage(), Message.FORM_ERROR, "Error message is not displayed as expected");
+
+        softAssert.assertAll();
     }
 
-    @Test
-    public void TC11() {
+    @Test(dataProvider = "emptyPasswordAndPid", dataProviderClass = DataTests.class)
+    public void TC11(Account account) {
         extentTest = ExtentManager.createTest("TC11", "User can't create account while password and PID fields are empty");
 
-        String email = "test" + System.currentTimeMillis() + "@example.com";
-        String password = "";
-        String confirmPassword = "";
-        String pid = "";
-
         homePage.open();
-        Constant.WEBDRIVER.findElement(By.xpath("//div[@id='menu']//a[@href='/Account/Register.cshtml']")).click();
-        registerPage.register(email, password, confirmPassword, pid);
+        homePage.clickRegisterTab();
+        registerPage.register(
+                account.getEmail(),
+                account.getPassword(),
+                account.getConfirmPassword(),
+                account.getPid()
+        );
 
-        String actualFormError = registerPage.getErrorMessage();
-        String actualPasswordError = registerPage.getFieldErrorMessage("password");
-        String actualPidError = registerPage.getFieldErrorMessage("pid");
+        Assert.assertEquals(registerPage.getErrorMessage(), Message.FORM_ERROR);
+        Assert.assertEquals( registerPage.getFieldErrorMessage("password"), Message.INVALID_PASSWORD_LENGTH);
+        Assert.assertEquals(registerPage.getFieldErrorMessage("pid"), Message.INVALID_ID_LENGTH);
 
-        Assert.assertEquals(actualFormError, "There're errors in the form. Please correct the errors and try again.");
-        Assert.assertEquals(actualPasswordError, "Invalid password length");
-        Assert.assertEquals(actualPidError, "Invalid ID length");
+        softAssert.assertAll();
     }
-
-
-
-
-
 }

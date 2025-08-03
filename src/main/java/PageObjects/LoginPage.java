@@ -1,8 +1,10 @@
 package PageObjects;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 import Constant.Constant;
+import org.openqa.selenium.interactions.Actions;
 
 public class LoginPage extends GeneralPage {
 
@@ -31,16 +33,31 @@ public class LoginPage extends GeneralPage {
 
     //Methods
     public HomePage login(String username, String password) {
-        // Submit login credentials
         this.getTxtUsername().sendKeys(username);
         this.getTxtPassword().sendKeys(password);
         this.getBtnLogin().click();
-
-        // Land on Home page
         return new HomePage();
     }
 
+    public void loginWithInvalidAttempts(String username, String wrongPassword, int attempts) {
+        for (int i = 1; i <= attempts; i++) {
+            clearUsername();
+            clearPassword();
+            login(username, wrongPassword);
+        }
+    }
+
+
+
     public String getLoginErrorMessageText() {
         return this.getLblLoginErrorMsg().getText();
+    }
+
+    public void clearPassword() {
+        this.getTxtPassword().clear();
+    }
+
+    public void clearUsername() {
+        this.getTxtUsername().clear();
     }
 }

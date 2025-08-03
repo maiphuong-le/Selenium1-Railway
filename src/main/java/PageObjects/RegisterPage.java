@@ -17,6 +17,11 @@ public class RegisterPage extends GeneralPage {
     private final By btnRegister = By.xpath("//input[@value='Register']");
     private final By lblRegisterSuccess = By.xpath("//div[@id='content']");
     private final By lblRegisterFail = By.xpath("//div[@id='content']");
+    private final By txtErrorMessage = By.cssSelector("p.message.error");
+    private final String fieldErrorLabelPattern = "//input[@id='%s']/following-sibling::label[@class='validation-error']";
+
+
+
 
     // Elements
     public WebElement getTxtEmail() {
@@ -62,11 +67,12 @@ public class RegisterPage extends GeneralPage {
     }
 
     public String getErrorMessage() {
-        return Constant.WEBDRIVER.findElement(By.cssSelector("p.message.error")).getText();
+        return Constant.WEBDRIVER.findElement(txtErrorMessage).getText();
     }
 
     public String getFieldErrorMessage(String fieldId) {
-        return Constant.WEBDRIVER.findElement(By.xpath("//input[@id='" + fieldId + "']/following-sibling::label[@class='validation-error']")).getText();
+        By fieldErrorLabel = By.xpath(String.format(fieldErrorLabelPattern,fieldId));
+        return Constant.WEBDRIVER.findElement(fieldErrorLabel).getText();
     }
 
 
