@@ -64,7 +64,7 @@
                     </includes>
                     <testSourceDirectory>${project.basedir}/src/main/java</testSourceDirectory>
                     <suiteXmlFiles>
-                        <suiteXmlFile>src/test/resources/testng.xml</suiteXmlFile>
+                        <suiteXmlFile>testng.xml</suiteXmlFile>
                     </suiteXmlFiles>
                 </configuration>
             </plugin>
