@@ -1,11 +1,10 @@
 package PageObjects;
 
-import Constant.Constant;
+import Common.DriverManager;
+import Model.Account;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebElement;
-
-import javax.swing.*;
 
 public class RegisterPage extends GeneralPage {
 
@@ -18,38 +17,36 @@ public class RegisterPage extends GeneralPage {
     private final By lblRegisterSuccess = By.xpath("//div[@id='content']");
     private final By lblRegisterFail = By.xpath("//div[@id='content']");
     private final By txtErrorMessage = By.cssSelector("p.message.error");
-    private final String fieldErrorLabelPattern = "//input[@id='%s']/following-sibling::label[@class='validation-error']";
-
-
-
+    private final String fieldErrorLabelPattern =
+            "//input[@id='%s']/following-sibling::label[@class='validation-error']";
 
     // Elements
     public WebElement getTxtEmail() {
-        return Constant.WEBDRIVER.findElement(txtEmail);
+        return DriverManager.getDriver().findElement(txtEmail);
     }
 
     public WebElement getTxtPassword() {
-        return Constant.WEBDRIVER.findElement(txtPassword);
+        return DriverManager.getDriver().findElement(txtPassword);
     }
 
     public WebElement getTxtConfirmPassword() {
-        return Constant.WEBDRIVER.findElement(txtConfirmPassword);
+        return DriverManager.getDriver().findElement(txtConfirmPassword);
     }
 
     public WebElement getTxtPID() {
-        return Constant.WEBDRIVER.findElement(txtPID);
+        return DriverManager.getDriver().findElement(txtPID);
     }
 
     public WebElement getBtnRegister() {
-        return Constant.WEBDRIVER.findElement(btnRegister);
+        return DriverManager.getDriver().findElement(btnRegister);
     }
 
     public WebElement getLblRegisterSuccess() {
-        return Constant.WEBDRIVER.findElement(lblRegisterSuccess);
+        return DriverManager.getDriver().findElement(lblRegisterSuccess);
     }
 
     public WebElement getLblRegisterFail() {
-        return Constant.WEBDRIVER.findElement(lblRegisterFail);
+        return DriverManager.getDriver().findElement(lblRegisterFail);
     }
 
     // Method
@@ -58,8 +55,17 @@ public class RegisterPage extends GeneralPage {
         getTxtPassword().sendKeys(password);
         getTxtConfirmPassword().sendKeys(confirmPassword);
         getTxtPID().sendKeys(pid);
-        ((JavascriptExecutor) Constant.WEBDRIVER).executeScript("arguments[0].click();", getBtnRegister());
+        ((JavascriptExecutor) DriverManager.getDriver()).executeScript(
+                "arguments[0].click();", getBtnRegister());
+    }
 
+    public void registerNotConfirm(Account account) {
+        getTxtEmail().sendKeys(account.getEmail());
+        getTxtPassword().sendKeys(account.getPassword());
+        getTxtConfirmPassword().sendKeys(account.getConfirmPassword());
+        getTxtPID().sendKeys(account.getPid());
+        ((JavascriptExecutor) DriverManager.getDriver()).executeScript(
+                "arguments[0].click();", getBtnRegister());
     }
 
     public String getSuccessMessage() {
@@ -67,13 +73,29 @@ public class RegisterPage extends GeneralPage {
     }
 
     public String getErrorMessage() {
-        return Constant.WEBDRIVER.findElement(txtErrorMessage).getText();
+        return DriverManager.getDriver().findElement(txtErrorMessage).getText();
     }
 
     public String getFieldErrorMessage(String fieldId) {
-        By fieldErrorLabel = By.xpath(String.format(fieldErrorLabelPattern,fieldId));
-        return Constant.WEBDRIVER.findElement(fieldErrorLabel).getText();
+        By fieldErrorLabel = By.xpath(String.format(fieldErrorLabelPattern, fieldId));
+        return DriverManager.getDriver().findElement(fieldErrorLabel).getText();
     }
+
+    public void registerConfirm(Account account) {
+        getTxtEmail().sendKeys(account.getEmail());
+        getTxtPassword().sendKeys(account.getPassword());
+        getTxtConfirmPassword().sendKeys(account.getConfirmPassword());
+        getTxtPID().sendKeys(account.getPid());
+        ((JavascriptExecutor) DriverManager.getDriver()).executeScript(
+                "arguments[0].click();", getBtnRegister());
+
+        // Optional: verify success
+        String successMsg = getSuccessMessage();
+        if (!successMsg.contains("registration") && !successMsg.contains("success")) {
+            throw new RuntimeException("Account registration failed: " + successMsg);
+        }
+    }
+
 
 
 

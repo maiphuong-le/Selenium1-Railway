@@ -3,13 +3,11 @@ package testCases;
 import Config.ExtentManager;
 import Constant.Constant;
 import Model.Account;
-import PageObjects.LoginPage;
-import dataTest.DataTests;
-import messages.Message;
 import PageObjects.HomePage;
 import PageObjects.RegisterPage;
+import dataTest.DataTests;
+import messages.Message;
 import config.BaseTest;
-import org.openqa.selenium.By;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -26,25 +24,31 @@ public class RegisterTest extends BaseTest {
         homePage = new HomePage();
         registerPage = new RegisterPage();
         softAssert = new SoftAssert();
-
     }
-
 
     @Test(dataProvider = "validRegisterAccount", dataProviderClass = DataTests.class)
     public void TC07(Account account) {
         extentTest = ExtentManager.createTest("TC07", "User can create new account");
         homePage.open();
         homePage.clickRegisterTab();
+
         registerPage.register(
                 account.getEmail(),
                 account.getPassword(),
                 account.getConfirmPassword(),
                 account.getPid()
         );
-        Assert.assertEquals(registerPage.getSuccessMessage(), Message.REGISTRATION_SUCCESS, "Success message is not displayed as expected");
+
+        Assert.assertEquals(
+                registerPage.getSuccessMessage(),
+                Message.REGISTRATION_SUCCESS,
+                "Success message is not displayed as expected"
+        );
 
         softAssert.assertAll();
     }
+
+
 
     @Test(dataProvider = "invalidConfirmPasswordAccount", dataProviderClass = DataTests.class)
     public void TC10(Account account) {
@@ -60,7 +64,11 @@ public class RegisterTest extends BaseTest {
                 account.getPid()
         );
 
-        Assert.assertEquals(registerPage.getErrorMessage(), Message.FORM_ERROR, "Error message is not displayed as expected");
+        Assert.assertEquals(
+                registerPage.getErrorMessage(),
+                Message.FORM_ERROR,
+                "Error message is not displayed as expected"
+        );
 
         softAssert.assertAll();
     }
@@ -71,6 +79,7 @@ public class RegisterTest extends BaseTest {
 
         homePage.open();
         homePage.clickRegisterTab();
+
         registerPage.register(
                 account.getEmail(),
                 account.getPassword(),
@@ -79,7 +88,7 @@ public class RegisterTest extends BaseTest {
         );
 
         Assert.assertEquals(registerPage.getErrorMessage(), Message.FORM_ERROR);
-        Assert.assertEquals( registerPage.getFieldErrorMessage("password"), Message.INVALID_PASSWORD_LENGTH);
+        Assert.assertEquals(registerPage.getFieldErrorMessage("password"), Message.INVALID_PASSWORD_LENGTH);
         Assert.assertEquals(registerPage.getFieldErrorMessage("pid"), Message.INVALID_ID_LENGTH);
 
         softAssert.assertAll();

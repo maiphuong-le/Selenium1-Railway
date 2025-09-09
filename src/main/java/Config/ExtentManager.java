@@ -8,6 +8,8 @@ import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.io.FileHandler;
+import Common.DriverManager;
+
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -18,7 +20,6 @@ public class ExtentManager {
     private static ExtentReports extent;
     private static ExtentSparkReporter sparkReporter;
     private static ExtentTest test;
-
 
     public static ExtentReports getInstance() {
         if (extent == null) {
@@ -46,8 +47,9 @@ public class ExtentManager {
             extent.flush();
         }
     }
+
     public static String captureScreenshot(WebDriver driver, String screenshotName) {
-        TakesScreenshot ts = (TakesScreenshot) driver;
+        TakesScreenshot ts = (TakesScreenshot) DriverManager.getDriver();
         File source = ts.getScreenshotAs(OutputType.FILE);
         String dest = "src/test/resources/screenshots/" + screenshotName + ".png";
         File destination = new File(dest);

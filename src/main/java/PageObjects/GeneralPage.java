@@ -2,7 +2,7 @@ package PageObjects;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
-import Constant.Constant;
+import Common.DriverManager;
 
 public class GeneralPage {
 
@@ -13,15 +13,15 @@ public class GeneralPage {
 
     // Elements
     protected WebElement getTabLogin() {
-        return Constant.WEBDRIVER.findElement(tabLogin);
+        return DriverManager.getDriver().findElement(tabLogin);
     }
 
     protected WebElement getTabLogout() {
-        return Constant.WEBDRIVER.findElement(tabLogout);
+        return DriverManager.getDriver().findElement(tabLogout);
     }
 
     protected WebElement getLblWelcomeMessage() {
-        return Constant.WEBDRIVER.findElement(lblWelcomeMessage);
+        return DriverManager.getDriver().findElement(lblWelcomeMessage);
     }
 
     // Methods
@@ -33,4 +33,6 @@ public class GeneralPage {
         this.getTabLogin().click();
         return new LoginPage();
     }
+
+
 }

@@ -1,15 +1,12 @@
 package Constant;
 
-import org.openqa.selenium.WebDriver;
-
 import java.time.format.DateTimeFormatter;
 
 public class Constant {
 
-    public static WebDriver WEBDRIVER;
     public static final String RAILWAY_URL = "http://railwayb1.somee.com/";
     public static final String USERNAME = "phuongle@agest.com";
-    public static final String BlANK_USERNAME = "";
+    public static final String BLANK_USERNAME = "";
     public static final String PASSWORD = "!hT7$kLp9Z@3wFqR";
 
     public static final String VALID_PASSWORD = "Valid12345";

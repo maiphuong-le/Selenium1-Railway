@@ -8,9 +8,10 @@ import config.BaseTest;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-import Constant.Constant;
 import messages.Message;
+import Constant.Constant;
 import org.testng.asserts.SoftAssert;
+import Common.DriverManager;
 
 public class AccessControlTest extends BaseTest {
 
@@ -26,13 +27,12 @@ public class AccessControlTest extends BaseTest {
         softAssert = new SoftAssert();
     }
 
-
     @Test
     public void TC04() {
         extentTest = ExtentManager.createTest("TC04", "Login page displays when unlogged user accesses protected page");
         homePage.open();
         homePage.clickBookTicketTab();
-        String currentUrl = Constant.WEBDRIVER.getCurrentUrl();
+        String currentUrl = DriverManager.getDriver().getCurrentUrl();
         Assert.assertTrue(currentUrl.contains("Login"),
                 "User is not redirected to Login page when accessing Book Ticket without logging in");
 
@@ -52,14 +52,13 @@ public class AccessControlTest extends BaseTest {
         Assert.assertTrue(homePage.isLogoutTabDisplayed(), Message.LOGOUT_TAB_NOT_DISPLAYED);
 
         homePage.clickMyTicketTab();
-        String currentUrl = Constant.WEBDRIVER.getCurrentUrl();
+        String currentUrl = DriverManager.getDriver().getCurrentUrl();
         Assert.assertTrue(currentUrl.contains("ManageTicket"), Message.NOT_NAVIGATED_TO_MY_TICKET);
 
         homePage.gotoChangePasswordPage();
-
         homePage.waitForUrlContains("ChangePassword");
 
-        currentUrl = Constant.WEBDRIVER.getCurrentUrl();
+        currentUrl = DriverManager.getDriver().getCurrentUrl();
         Assert.assertTrue(currentUrl.contains("ChangePassword"), Message.NOT_NAVIGATED_TO_CHANGE_PASSWORD);
 
         softAssert.assertAll();

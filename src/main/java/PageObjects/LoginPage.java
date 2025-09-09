@@ -1,37 +1,35 @@
 package PageObjects;
 
+import Common.DriverManager;
 import org.openqa.selenium.By;
-import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
-import Constant.Constant;
-import org.openqa.selenium.interactions.Actions;
 
 public class LoginPage extends GeneralPage {
 
     // Locators
-    private final By _txtUsername = By.xpath("//input[@id='username']");
-    private final By _txtPassword = By.xpath("//input[@id='password']");
-    private final By _btnLogin = By.xpath("//input[@value='login']");
-    private final By _lblLoginErrorMsg = By.xpath("//p[@class='message error LoginForm']");
+    private final By txtUsername = By.xpath("//input[@id='username']");
+    private final By txtPassword = By.xpath("//input[@id='password']");
+    private final By btnLogin = By.xpath("//input[@value='login']");
+    private final By lblLoginErrorMsg = By.xpath("//p[@class='message error LoginForm']");
 
     // Elements
     public WebElement getTxtUsername() {
-        return Constant.WEBDRIVER.findElement(_txtUsername);
+        return DriverManager.getDriver().findElement(txtUsername);
     }
 
     public WebElement getTxtPassword() {
-        return Constant.WEBDRIVER.findElement(_txtPassword);
+        return DriverManager.getDriver().findElement(txtPassword);
     }
 
     public WebElement getBtnLogin() {
-        return Constant.WEBDRIVER.findElement(_btnLogin);
+        return DriverManager.getDriver().findElement(btnLogin);
     }
 
     public WebElement getLblLoginErrorMsg() {
-        return Constant.WEBDRIVER.findElement(_lblLoginErrorMsg);
+        return DriverManager.getDriver().findElement(lblLoginErrorMsg);
     }
 
-    //Methods
+    // Methods
     public HomePage login(String username, String password) {
         this.getTxtUsername().sendKeys(username);
         this.getTxtPassword().sendKeys(password);
@@ -47,8 +45,6 @@ public class LoginPage extends GeneralPage {
         }
     }
 
-
-
     public String getLoginErrorMessageText() {
         return this.getLblLoginErrorMsg().getText();
     }
@@ -59,5 +55,10 @@ public class LoginPage extends GeneralPage {
 
     public void clearUsername() {
         this.getTxtUsername().clear();
+    }
+
+    public void clickForgotPasswordLink() {
+        By forgotPasswordLink = By.xpath("//a[@href='/Account/ForgotPassword.cshtml']");
+        DriverManager.getDriver().findElement(forgotPasswordLink).click();
     }
 }

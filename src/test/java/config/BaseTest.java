@@ -1,14 +1,16 @@
 package config;
 
 import Config.ExtentManager;
-import Constant.Constant;
+import Common.DriverManager;
 import com.aventstack.extentreports.ExtentTest;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.testng.ITestResult;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
+
 import java.util.HashMap;
 
 public class BaseTest {
@@ -19,7 +21,6 @@ public class BaseTest {
         WebDriverManager.chromedriver().setup();
 
         ChromeOptions options = new ChromeOptions();
-
         HashMap<String, Object> prefs = new HashMap<>();
         prefs.put("credentials_enable_service", false);
         prefs.put("profile.password_manager_enabled", false);
@@ -40,16 +41,18 @@ public class BaseTest {
         options.addArguments("--no-first-run");
         options.addArguments("--user-data-dir=" + System.getProperty("java.io.tmpdir") + "/chrome-profile-" + System.currentTimeMillis());
 
-        Constant.WEBDRIVER = new ChromeDriver(options);
-        Constant.WEBDRIVER.manage().window().maximize();
+        WebDriver driver = new ChromeDriver(options);
+        driver.manage().window().maximize();
+        DriverManager.setDriver(driver);
     }
 
     @AfterMethod
     public void afterMethod(ITestResult result) {
+        WebDriver driver = DriverManager.getDriver();
         if (extentTest != null) {
             if (result.getStatus() == ITestResult.FAILURE) {
                 extentTest.fail("Test failed: " + result.getThrowable().getMessage());
-                String screenshotPath = ExtentManager.captureScreenshot(Constant.WEBDRIVER, result.getName());
+                String screenshotPath = ExtentManager.captureScreenshot(driver, result.getName());
                 extentTest.addScreenCaptureFromPath(screenshotPath);
             } else if (result.getStatus() == ITestResult.SUCCESS) {
                 extentTest.pass("Test passed");
@@ -58,6 +61,6 @@ public class BaseTest {
             }
             ExtentManager.flush();
         }
-        Constant.WEBDRIVER.quit();
+        DriverManager.quitDriver();
     }
 }

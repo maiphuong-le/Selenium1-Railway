@@ -1,14 +1,18 @@
 package testCases;
 
 import Config.ExtentManager;
+import PageObjects.ChangePasswordPage;
 import PageObjects.HomePage;
 import PageObjects.LoginPage;
+import PageObjects.RegisterPage;
 import config.BaseTest;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import Constant.Constant;
+import Model.Account;
+import dataTest.DataTests;
 import messages.Message;
 import org.testng.asserts.SoftAssert;
 
@@ -16,17 +20,16 @@ public class LoginTest extends BaseTest {
 
     HomePage homePage;
     LoginPage loginPage;
+    RegisterPage registerPage;
     SoftAssert softAssert;
-
 
     @BeforeMethod
     public void setUp() {
         homePage = new HomePage();
         loginPage = new LoginPage();
+        registerPage = new RegisterPage();
         softAssert = new SoftAssert();
-
     }
-
 
     @Test
     public void TC01() {
@@ -46,8 +49,15 @@ public class LoginTest extends BaseTest {
         extentTest = ExtentManager.createTest("TC02", "User can't login with blank 'Username' textbox");
         homePage.open();
         loginPage = homePage.gotoLoginPage();
-        loginPage.login(Constant.BlANK_USERNAME, Constant.PASSWORD);
-        Assert.assertEquals(loginPage.getLoginErrorMessageText(), Message.LOGIN_ERROR, Message.ERROR_USERNAME_BLANK);
+
+        loginPage.login(Constant.BLANK_USERNAME, Constant.PASSWORD);
+
+        Assert.assertEquals(
+                loginPage.getLoginErrorMessageText(),
+                Message.LOGIN_ERROR,
+                Message.ERROR_USERNAME_BLANK
+        );
+
         softAssert.assertAll();
     }
 
@@ -58,7 +68,12 @@ public class LoginTest extends BaseTest {
         loginPage = homePage.gotoLoginPage();
 
         loginPage.login(Constant.USERNAME, Constant.INVALID_PASSWORD);
-        Assert.assertEquals(loginPage.getLoginErrorMessageText(), Message.LOGIN_ERROR, Message.ERROR_PASSWORD_INVALID);
+
+        Assert.assertEquals(
+                loginPage.getLoginErrorMessageText(),
+                Message.LOGIN_ERROR,
+                Message.ERROR_PASSWORD_INVALID
+        );
 
         softAssert.assertAll();
     }
@@ -67,12 +82,38 @@ public class LoginTest extends BaseTest {
     public void TC05() {
         extentTest = ExtentManager.createTest("TC05", "System shows message when user enters wrong password several times");
         homePage.open();
-
         loginPage = homePage.gotoLoginPage();
+
         loginPage.loginWithInvalidAttempts(Constant.USERNAME, Constant.INVALID_PASSWORD, 4);
 
-        Assert.assertEquals(loginPage.getLoginErrorMessageText(), Message.WARNING_LOGIN_ATTEMPTS, Message.WARNING_LOGIN_ATTEMPTS_NOT_DISPLAYED);
+        Assert.assertEquals(
+                loginPage.getLoginErrorMessageText(),
+                Message.WARNING_LOGIN_ATTEMPTS,
+                Message.WARNING_LOGIN_ATTEMPTS_NOT_DISPLAYED
+        );
 
         softAssert.assertAll();
     }
+
+    @Test(dataProvider = "register_data", dataProviderClass = DataTests.class)
+    public void TC08(Account account) {
+        extentTest = ExtentManager.createTest("TC08", "User can't login with an account hasn't been activated");
+
+        homePage.open();
+        homePage.clickRegisterTab();
+        registerPage.registerNotConfirm(account);
+        homePage.clickLoginTab();
+
+        loginPage.login(account.getEmail(), account.getPassword());
+
+        Assert.assertEquals(
+                loginPage.getLoginErrorMessageText(),
+                Message.LOGIN_ERROR_NOT_ACTIVATED,
+                Message.ERROR_INACTIVE_ACCOUNT
+        );
+
+        softAssert.assertAll();
+    }
+
+
 }
