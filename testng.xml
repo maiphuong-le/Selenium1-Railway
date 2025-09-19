@@ -14,6 +14,13 @@
                     <include name="TC02" />
                     <include name="TC03" />
                     <include name="TC05" />
+                    <include name="TC08" />
+                </methods>
+            </class>
+            <class name="testCases.ResetPasswordTest">
+                <methods>
+                    <include name="TC12" />
+                    <include name="TC13" />
                 </methods>
             </class>
             <class name="testCases.RegisterTest">
@@ -23,6 +30,27 @@
                     <include name="TC11" />
                 </methods>
             </class>
+            <class name="testCases.BookTicketTest">
+                <methods>
+                    <include name="TC14" />
+                    <include name="TC15" />
+                </methods>
+            </class>
+
+            <class name="testCases.ChangePasswordTest">
+                <methods>
+                    <include name="TC09" />
+                </methods>
+            </class>
+
+            <class name="testCases.MyTicketTest">
+                <methods>
+                    <include name="TC16" />
+                </methods>
+            </class>
+
+
+
         </classes>
     </test>
 </suite>
