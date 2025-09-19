@@ -62,6 +62,13 @@ public class DataTests {
         };
     }
 
+    @DataProvider(name = "register_data")
+    public static Object[][] register_data() {
+        return new Object[][]{
+                {createValidAccount()}
+        };
+    }
+
     @DataProvider(name = "changePasswordData")
     public Object[][] changePasswordData() {
         Account account = new Account(
@@ -126,19 +133,21 @@ public class DataTests {
 
     @DataProvider(name = "bookOneTicketData")
     public Object[][] bookOneTicketData() {
+        int randomNumber = (int) (Math.random() * 1000) + 1;
         Account newAccount = new Account(
-                "automation_user_" + System.currentTimeMillis() + "@example.com",
+                "automation_user_" + randomNumber + "@gmail.com",
                 "Password123!",
                 "Password123!",
                 "123456789"
         );
 
-        Ticket ticket = new Ticket();
-        ticket.setDepartDate(LocalDate.now().plusDays(7));
-        ticket.setFrom(Station.SAI_GON);
-        ticket.setTo(Station.NHA_TRANG);
-        ticket.setSeatType(SeatType.SOFT_BED_AC);
-        ticket.setTicketAmount(1);
+        Ticket ticket = new Ticket(
+                LocalDate.now().plusDays(7),
+                Station.SAI_GON,
+                Station.NHA_TRANG,
+                SeatType.SOFT_BED_AC,
+                1
+        );
 
         return new Object[][]{
                 {newAccount, ticket}
@@ -147,8 +156,9 @@ public class DataTests {
 
     @DataProvider(name = "bookTicketFromHueToSaiGon")
     public Object[][] bookTicketFromHueToSaiGon() {
+        int randomNumber = (int) (Math.random() * 1000) + 1;
         Account newAccount = new Account(
-                "automation_user_" + System.currentTimeMillis() + "@example.com",
+                "automation_user_" + randomNumber + "@gmail.com",
                 "Password123!",
                 "Password123!",
                 "123456789"
@@ -161,19 +171,21 @@ public class DataTests {
 
     @DataProvider(name = "ticket_data_cancel")
     public Object[][] ticket_data_cancel() {
+        int randomNumber = (int) (Math.random() * 1000) + 1;
         Account newAccount = new Account(
-                "automation_user_" + System.currentTimeMillis() + "@example.com",
+                "automation_user_" + randomNumber + "@gmail.com",
                 "Password123!",
                 "Password123!",
                 "123456789"
         );
 
-        Ticket ticket = new Ticket();
-        ticket.setDepartDate(LocalDate.now().plusDays(7));
-        ticket.setFrom(Station.HUE);
-        ticket.setTo(Station.SAI_GON);
-        ticket.setSeatType(SeatType.SOFT_BED_AC);
-        ticket.setTicketAmount(1);
+        Ticket ticket = new Ticket(
+                LocalDate.now().plusDays(7),
+                Station.HUE,
+                Station.SAI_GON,
+                SeatType.SOFT_BED_AC,
+                1
+        );
 
         return new Object[][]{
                 {newAccount, ticket}

@@ -14,7 +14,7 @@ import java.time.format.DateTimeFormatter;
 
 public class BookTicketPage {
 
-    private final By _cmbDepartDate = By.name("Date");
+    private final By _cmbDepartDate = By.xpath("//select[@name='Date' or @id='Date' or contains(@class, 'date')]");
     private final By _cmbDepartFrom = By.name("DepartStation");
     private final By _cmbArriveAt = By.name("ArriveStation");
     private final By _cmbSeatType = By.name("SeatType");
@@ -23,7 +23,20 @@ public class BookTicketPage {
 
     public void selectDepartDate(LocalDate date) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("M/d/yyyy");
-        new Select(DriverManager.getDriver().findElement(_cmbDepartDate)).selectByVisibleText(date.format(formatter));
+        try {
+            WebElement dateElement = DriverManager.getDriver().findElement(_cmbDepartDate);
+            new Select(dateElement).selectByVisibleText(date.format(formatter));
+        } catch (Exception e) {
+            // Try alternative selectors for date field
+            try {
+                WebElement dateElement = DriverManager.getDriver().findElement(By.name("DepartDate"));
+                new Select(dateElement).selectByVisibleText(date.format(formatter));
+            } catch (Exception e2) {
+                // Try with a different selector
+                WebElement dateElement = DriverManager.getDriver().findElement(By.xpath("//select[contains(@name, 'Date') or contains(@id, 'Date')]"));
+                new Select(dateElement).selectByVisibleText(date.format(formatter));
+            }
+        }
     }
 
     public void selectDepartFrom(Station departFrom) {

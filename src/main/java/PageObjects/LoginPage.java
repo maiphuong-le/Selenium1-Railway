@@ -1,6 +1,7 @@
 package PageObjects;
 
 import Common.DriverManager;
+import Common.ScrollClickHandler;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
@@ -33,7 +34,11 @@ public class LoginPage extends GeneralPage {
     public HomePage login(String username, String password) {
         this.getTxtUsername().sendKeys(username);
         this.getTxtPassword().sendKeys(password);
-        this.getBtnLogin().click();
+        
+        // Use ScrollClickHandler to avoid click interception
+        ScrollClickHandler scrollClickHandler = new ScrollClickHandler(DriverManager.getDriver());
+        scrollClickHandler.click(getBtnLogin());
+        
         return new HomePage();
     }
 

@@ -51,7 +51,13 @@ public class ResetPasswordTest extends BaseTest {
         forgotPasswordPage.requestPasswordReset(account.getEmail());
 
         String emailContent = mailReader.readEmail(emailConfig);
+        if (emailContent == null || emailContent.isEmpty()) {
+            throw new RuntimeException("Unable to read email content for password reset");
+        }
         String resetUrl = UrlExtractor.confirmationUrlResetPassword(emailContent);
+        if (resetUrl == null || resetUrl.isEmpty()) {
+            throw new RuntimeException("Unable to extract reset URL from email");
+        }
         resetPasswordPage.navigateTo(resetUrl);
 
         resetPasswordPage.fillResetPasswordForm(newPassword, confirmPassword);
@@ -80,7 +86,13 @@ public class ResetPasswordTest extends BaseTest {
         loginPage.clickForgotPasswordLink();
         forgotPasswordPage.requestPasswordReset(account.getEmail());
         String emailContent = mailReader.readEmail(emailConfig);
+        if (emailContent == null || emailContent.isEmpty()) {
+            throw new RuntimeException("Unable to read email content for password reset");
+        }
         String resetUrl = UrlExtractor.confirmationUrlResetPassword(emailContent);
+        if (resetUrl == null || resetUrl.isEmpty()) {
+            throw new RuntimeException("Unable to extract reset URL from email");
+        }
         resetPasswordPage.navigateTo(resetUrl);
 
         resetPasswordPage.fillResetPasswordForm(newPassword, mismatchedConfirmPassword);

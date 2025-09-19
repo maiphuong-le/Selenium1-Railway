@@ -7,7 +7,7 @@ public class Message {
     public static final String WELCOME_MESSAGE_NOT_DISPLAYED = "Welcome message is not displayed as expected";
 
     // Error messages
-    public static final String LOGIN_ERROR = "There was a problem with your login and/or errors exist in your form.";
+    public static final String LOGIN_ERROR = "Invalid username or password. Please try again.";
     public static final String ERROR_USERNAME_BLANK = "Error message is not displayed as expected when username is blank";
     public static final String ERROR_PASSWORD_INVALID = "Error message is not displayed as expected when password is invalid";
     public static final String GENERAL_LOGIN_ERROR = "General login error message should appear";

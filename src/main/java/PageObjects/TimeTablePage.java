@@ -17,7 +17,16 @@ public class TimeTablePage {
     public TimeTablePage clickBookTicketLink(Station departFrom, Station arriveAt) {
         String xpath = String.format("//tr[td[2]='%s' and td[3]='%s']//a[text()='book ticket']",
                 departFrom.getStationName(), arriveAt.getStationName());
-        scrollClickHandler.click((WebElement) By.xpath(xpath));
+        try {
+            WebElement bookTicketLink = DriverManager.getDriver().findElement(By.xpath(xpath));
+            scrollClickHandler.click(bookTicketLink);
+        } catch (Exception e) {
+            // Try alternative selector
+            String alternativeXpath = String.format("//tr[contains(., '%s') and contains(., '%s')]//a[contains(@href, 'BookTicket') or text()='book ticket']",
+                    departFrom.getStationName(), arriveAt.getStationName());
+            WebElement bookTicketLink = DriverManager.getDriver().findElement(By.xpath(alternativeXpath));
+            scrollClickHandler.click(bookTicketLink);
+        }
         return this;
     }
 }

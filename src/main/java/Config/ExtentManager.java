@@ -51,13 +51,16 @@ public class ExtentManager {
     public static String captureScreenshot(WebDriver driver, String screenshotName) {
         TakesScreenshot ts = (TakesScreenshot) DriverManager.getDriver();
         File source = ts.getScreenshotAs(OutputType.FILE);
-        String dest = "src/test/resources/screenshots/" + screenshotName + ".png";
-        File destination = new File(dest);
+        String relativePath = "src/test/resources/screenshots/" + screenshotName + ".png";
+        File destination = new File(relativePath);
+        
         try {
             FileHandler.copy(source, destination);
+            // Return absolute path for better compatibility with HTML report
+            return destination.getAbsolutePath();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return dest;
+        return relativePath;
     }
 }
